@@ -1,0 +1,78 @@
+{
+  "name": "@lpm.dev/neo.lumen",
+  "version": "1.0.0",
+  "description": "The fastest, most modern HTTP logger for Node.js - Illuminate every request",
+  "type": "module",
+  "author": "neo",
+  "license": "MIT",
+  "keywords": [
+    "lumen",
+    "neo",
+    "logger",
+    "http",
+    "logging",
+    "fast",
+    "modern",
+    "typescript",
+    "structured-logging",
+    "express",
+    "middleware"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ne-ooo/neo.lumen"
+  },
+  "homepage": "https://github.com/ne-ooo/neo.lumen#readme",
+  "bugs": {
+    "url": "https://github.com/ne-ooo/neo.lumen/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    ".lpm",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "bench": "vitest bench",
+    "bench:compare": "tsx test/benchmarks/run-comparison.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm clean && pnpm build && pnpm test && pnpm bench"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}
