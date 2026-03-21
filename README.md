@@ -25,25 +25,26 @@ lpm install @lpm.dev/neo.lumen
 ## Quick Start
 
 ```typescript
-import express from 'express'
-import lumen from '@lpm.dev/neo.lumen'
+import express from "express";
+import lumen from "@lpm.dev/neo.lumen";
 
-const app = express()
+const app = express();
 
 // Use default 'dev' format
-app.use(lumen())
+app.use(lumen());
 
 // Or specify a format
-app.use(lumen('tiny'))
+app.use(lumen("tiny"));
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
-})
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 
-app.listen(3000)
+app.listen(3000);
 ```
 
 **Output:**
+
 ```
 GET / 200 2.458 ms - 11
 POST /api/users 201 45.123 ms - 156
@@ -56,25 +57,40 @@ POST /api/users 201 45.123 ms - 156
 ### Predefined Formats
 
 #### `dev` (default)
+
 Colored output for development:
+
 ```
 GET /api/users 200 4.521 ms - 1234
 ```
 
 #### `tiny`
+
 Minimal output:
+
 ```
 GET /api/users 200 1234 - 4.521 ms
 ```
 
 #### `json`
+
 Structured JSON logs:
+
 ```json
-{"timestamp":"2024-01-15T10:30:45.123Z","method":"GET","url":"/api/users","status":200,"responseTime":"4.521","contentLength":"1234"}
+{
+  "timestamp": "2024-01-15T10:30:45.123Z",
+  "method": "GET",
+  "url": "/api/users",
+  "status": 200,
+  "responseTime": "4.521",
+  "contentLength": "1234"
+}
 ```
 
 #### `combined`
+
 Apache combined log format:
+
 ```
 127.0.0.1 - - [15/Jan/2024:10:30:45 +0000] "GET /api/users HTTP/1.1" 200 1234
 ```
@@ -84,26 +100,26 @@ Apache combined log format:
 Create custom formats using tokens:
 
 ```typescript
-app.use(lumen(':method :url :status :response-time ms'))
+app.use(lumen(":method :url :status :response-time ms"));
 // Output: GET /api/users 200 4.521 ms
 ```
 
 ### Available Tokens
 
-| Token | Description | Example |
-|-------|-------------|---------|
-| `:method` | HTTP method | `GET` |
-| `:url` | Request URL | `/api/users` |
-| `:status` | Response status | `200` |
-| `:response-time[digits]` | Response time in ms | `4.521` |
-| `:date[format]` | Date/time | `15/Jan/2024:10:30:45 +0000` |
-| `:req[header]` | Request header | `:req[user-agent]` |
-| `:res[header]` | Response header | `:res[content-length]` |
-| `:http-version` | HTTP version | `1.1` |
-| `:remote-addr` | Client IP | `127.0.0.1` |
-| `:user-agent` | User agent | `Mozilla/5.0...` |
-| `:referrer` | Referrer | `https://example.com` |
-| `:id` | Request ID | `550e8400-e29b-41d4-a716-446655440000` |
+| Token                    | Description         | Example                                |
+| ------------------------ | ------------------- | -------------------------------------- |
+| `:method`                | HTTP method         | `GET`                                  |
+| `:url`                   | Request URL         | `/api/users`                           |
+| `:status`                | Response status     | `200`                                  |
+| `:response-time[digits]` | Response time in ms | `4.521`                                |
+| `:date[format]`          | Date/time           | `15/Jan/2024:10:30:45 +0000`           |
+| `:req[header]`           | Request header      | `:req[user-agent]`                     |
+| `:res[header]`           | Response header     | `:res[content-length]`                 |
+| `:http-version`          | HTTP version        | `1.1`                                  |
+| `:remote-addr`           | Client IP           | `127.0.0.1`                            |
+| `:user-agent`            | User agent          | `Mozilla/5.0...`                       |
+| `:referrer`              | Referrer            | `https://example.com`                  |
+| `:id`                    | Request ID          | `550e8400-e29b-41d4-a716-446655440000` |
 
 ---
 
@@ -112,25 +128,25 @@ app.use(lumen(':method :url :status :response-time ms'))
 ```typescript
 interface LumnrOptions {
   // Output stream (default: process.stdout)
-  stream?: NodeJS.WritableStream
+  stream?: NodeJS.WritableStream;
 
   // Log immediately on request start instead of finish
-  immediate?: boolean
+  immediate?: boolean;
 
   // Skip logging based on condition
-  skip?: (req: Request, res: Response) => boolean
+  skip?: (req: Request, res: Response) => boolean;
 
   // Sample rate (0-1), e.g., 0.1 = log 10% of requests
-  sample?: number
+  sample?: number;
 
   // Redact sensitive data
-  redact?: string[]
+  redact?: string[];
 
   // Include request ID header (X-Request-ID)
-  includeRequestId?: boolean
+  includeRequestId?: boolean;
 
   // Custom request ID generator
-  generateRequestId?: () => string
+  generateRequestId?: () => string;
 }
 ```
 
@@ -141,9 +157,11 @@ interface LumnrOptions {
 ### Request ID Tracking
 
 ```typescript
-app.use(lumen('dev', {
-  includeRequestId: true
-}))
+app.use(
+  lumen("dev", {
+    includeRequestId: true,
+  }),
+);
 
 // Each request gets a unique ID in the X-Request-ID header
 ```
@@ -151,9 +169,11 @@ app.use(lumen('dev', {
 ### Redact Sensitive Data
 
 ```typescript
-app.use(lumen('dev', {
-  redact: ['password', 'token', 'apiKey', 'secret']
-}))
+app.use(
+  lumen("dev", {
+    redact: ["password", "token", "apiKey", "secret"],
+  }),
+);
 
 // Input:  GET /login?password=secret123&email=user@example.com
 // Output: GET /login?password=***REDACTED***&email=user@example.com
@@ -163,52 +183,60 @@ app.use(lumen('dev', {
 
 ```typescript
 // Only log errors
-app.use(lumen('dev', {
-  skip: (req, res) => res.statusCode < 400
-}))
+app.use(
+  lumen("dev", {
+    skip: (req, res) => res.statusCode < 400,
+  }),
+);
 
 // Only log slow requests
-app.use(lumen('dev', {
-  skip: (req, res) => {
-    const duration = res.getHeader('X-Response-Time')
-    return duration && parseFloat(duration as string) < 100
-  }
-}))
+app.use(
+  lumen("dev", {
+    skip: (req, res) => {
+      const duration = res.getHeader("X-Response-Time");
+      return duration && parseFloat(duration as string) < 100;
+    },
+  }),
+);
 ```
 
 ### Sampling
 
 ```typescript
 // Log only 10% of requests (for high-traffic apps)
-app.use(lumen('dev', {
-  sample: 0.1
-}))
+app.use(
+  lumen("dev", {
+    sample: 0.1,
+  }),
+);
 ```
 
 ### Custom Stream
 
 ```typescript
-import { createWriteStream } from 'fs'
+import { createWriteStream } from "fs";
 
-const logStream = createWriteStream('./access.log', { flags: 'a' })
+const logStream = createWriteStream("./access.log", { flags: "a" });
 
-app.use(lumen('combined', {
-  stream: logStream
-}))
+app.use(
+  lumen("combined", {
+    stream: logStream,
+  }),
+);
 ```
 
 ### Custom Tokens
 
 ```typescript
-import lumen from '@lpm.dev/neo.lumen'
+import lumen from "@lpm.dev/neo.lumen";
 
 // Add custom token
-lumen.token('custom-header', (req, res) => {
-  return req.headers['x-custom-header'] || '-'
-})
+lumen.token("custom-header", (req, res) => {
+  return req.headers["x-custom-header"] || "-";
+});
 
 // Use in format
-app.use(lumen(':method :url :custom-header'))
+app.use(lumen(":method :url :custom-header"));
 ```
 
 ---
@@ -219,15 +247,16 @@ app.use(lumen(':method :url :custom-header'))
 
 ### Real HTTP Server Benchmarks (autocannon)
 
-| Logger | Req/sec | vs Baseline | Winner |
-|--------|---------|-------------|--------|
-| Baseline (no logging) | 52,169 | 100.0% | - |
-| **lumen dev** | **44,012** | **84.4%** | 🥇 |
-| **lumen json** | **39,155** | **75.1%** | 🥈 |
-| pino (extreme) | 24,920 | 47.8% | 🥉 |
-| morgan (dev) | 10,509 | 20.1% | - |
+| Logger                | Req/sec    | vs Baseline | Winner |
+| --------------------- | ---------- | ----------- | ------ |
+| Baseline (no logging) | 52,169     | 100.0%      | -      |
+| **lumen dev**         | **44,012** | **84.4%**   | 🥇     |
+| **lumen json**        | **39,155** | **75.1%**   | 🥈     |
+| pino (extreme)        | 24,920     | 47.8%       | 🥉     |
+| morgan (dev)          | 10,509     | 20.1%       | -      |
 
 **Results:**
+
 - **4.2x faster than morgan** (44k vs 10.5k req/sec)
 - **1.77x faster than pino** (44k vs 24.9k req/sec)
 - Only **15.6% overhead** (vs pino's 52.2%, morgan's 79.9%)
@@ -276,34 +305,22 @@ pnpm bench        # Run benchmarks
 
 ---
 
-## Architecture
-
-See `../AGENTS/` for detailed documentation:
-
-- **core.md** - Core logging system
-- **performance.md** - Performance optimization
-- **formats.md** - Format compilation & tokens
-- **typescript.md** - TypeScript configuration
-- **api.md** - Public API design
-- **benchmarks.md** - Benchmarking system
-
----
-
 ## Migration from Morgan
 
 lumen is API-compatible with morgan for basic usage:
 
 ```typescript
 // Morgan
-import morgan from 'morgan'
-app.use(morgan('dev'))
+import morgan from "morgan";
+app.use(morgan("dev"));
 
 // lumen
-import lumen from '@lpm.dev/neo.lumen'
-app.use(lumen('dev'))
+import lumen from "@lpm.dev/neo.lumen";
+app.use(lumen("dev"));
 ```
 
 **Differences:**
+
 - Zero dependencies (morgan has 9 dependencies)
 - Faster performance
 - Better TypeScript support
@@ -317,15 +334,15 @@ app.use(lumen('dev'))
 Full TypeScript support with strict types:
 
 ```typescript
-import lumen, { LumnrOptions, Request, Response } from '@lpm.dev/neo.lumen'
+import lumen, { LumnrOptions, Request, Response } from "@lpm.dev/neo.lumen";
 
 const options: LumnrOptions = {
   skip: (req: Request, res: Response) => res.statusCode < 400,
-  redact: ['password'],
-  includeRequestId: true
-}
+  redact: ["password"],
+  includeRequestId: true,
+};
 
-app.use(lumen('dev', options))
+app.use(lumen("dev", options));
 ```
 
 ---
@@ -342,31 +359,6 @@ npm run test:coverage
 # Run benchmarks
 npm run bench
 ```
-
----
-
-## Progress
-
-### ✅ v0.1 (MVP)
-- ✅ Core logger implementation
-- ✅ Basic formats (dev, combined, tiny, json)
-- ✅ Built-in tokens
-- ✅ Test suite (19 tests passing)
-- ✅ Benchmarking system
-
-### ✅ v0.5 (Beta)
-- ✅ Request ID generation
-- ✅ Data redaction
-- ✅ Sampling
-- ✅ Skip/conditional logging
-- ✅ Performance optimization
-
-### 🚧 v1.0 (Next)
-- [ ] Real HTTP server benchmarks vs Pino/Morgan
-- [ ] Production testing
-- [ ] Example applications
-- [ ] Migration guides
-- [ ] Performance tuning
 
 ---
 
